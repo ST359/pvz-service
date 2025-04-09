@@ -15,15 +15,15 @@ const (
 
 // Defines values for PVZCity.
 const (
-	Kazan         PVZCity = "Казань"
-	Moscow         PVZCity = "Москва"
+	Kazan           PVZCity = "Казань"
+	Moscow          PVZCity = "Москва"
 	SaintPetersburg PVZCity = "Санкт-Петербург"
 )
 
 // Defines values for ProductType.
 const (
 	ProductTypeShoes       ProductType = "обувь"
-	ProductTypeClothes      ProductType = "одежда"
+	ProductTypeClothes     ProductType = "одежда"
 	ProductTypeElectronics ProductType = "электроника"
 )
 
@@ -48,7 +48,7 @@ const (
 // Defines values for PostProductsJSONBodyType.
 const (
 	PostProductsJSONBodyTypeShoes       PostProductsJSONBodyType = "обувь"
-	PostProductsJSONBodyTypeClothes      PostProductsJSONBodyType = "одежда"
+	PostProductsJSONBodyTypeClothes     PostProductsJSONBodyType = "одежда"
 	PostProductsJSONBodyTypeElectronics PostProductsJSONBodyType = "электроника"
 )
 
