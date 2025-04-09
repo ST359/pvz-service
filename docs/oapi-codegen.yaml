@@ -1,0 +1,4 @@
+output: dto.gen.go
+package: api
+generate:
+  models: true
