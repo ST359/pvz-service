@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ST359/pvz-service/internal/config"
+	_ "github.com/lib/pq"
 )
 
 const (
