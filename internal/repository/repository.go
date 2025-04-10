@@ -5,7 +5,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Authorization interface {
+type User interface {
 	Create(user api.PostRegisterJSONBody) (api.User, error)
 	Login(credentials api.PostLoginJSONBody) (api.Token, error)
 }
