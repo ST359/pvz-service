@@ -36,7 +36,27 @@ components:
           type: string
           enum: [Москва, Санкт-Петербург, Казань]
       required: [city]
-
+    PVZInfo:
+      type: object
+      properties:
+        pvz:
+          $ref: '#/components/schemas/PVZ'
+        receptions:
+          type: array
+          items:
+            type: object
+            properties:
+              reception:
+                $ref: '#/components/schemas/Reception'
+              products:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    PVZResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/PVZInfo'
+    
     Reception:
       type: object
       properties:
@@ -249,23 +269,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    pvz:
-                      $ref: '#/components/schemas/PVZ'
-                    receptions:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          reception:
-                            $ref: '#/components/schemas/Reception'
-                          products:
-                            type: array
-                            items:
-                              $ref: '#/components/schemas/Product'
+                $ref: '#/components/schemas/PVZResponse'
 
   /pvz/{pvzId}/close_last_reception:
     post:
