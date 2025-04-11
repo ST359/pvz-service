@@ -8,7 +8,7 @@ import (
 )
 
 type User interface {
-	Create(email string, password_hash string, role string) (string, error)
+	Create(email string, password_hash string, role string) (uuid.UUID, error)
 	//Login returns password hash and role of a user with given email
 	Login(email string) (string, string, error)
 }

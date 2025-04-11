@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/google/uuid"
 )
 
 type UserPostgres struct {
@@ -15,23 +16,25 @@ func NewUserPostgres(db *sql.DB) *UserPostgres {
 	return &UserPostgres{db: db}
 }
 
-func (u *UserPostgres) Create(email string, password_hash string, role string) (string, error) {
+// Create creates user and returns new user's ID(UUID)
+func (u *UserPostgres) Create(email string, password_hash string, role string) (uuid.UUID, error) {
 	const op = "repository.user.Create"
 
-	var id string
+	var id uuid.UUID
 	psql := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 	err := psql.Insert(usersTable).
 		Columns("email", "password_hash", "role").
 		Values(email, password_hash, role).
-		Suffix("RETURNING \"id\"").
+		Suffix("RETURNING id").
 		RunWith(u.db).
 		QueryRow().Scan(&id)
 	if err != nil {
-		return "", fmt.Errorf("%s: %w", op, err)
+		return uuid.UUID{}, fmt.Errorf("%s: %w", op, err)
 	}
 	return id, nil
-
 }
+
+// Login returns password hash and role of a user with given email
 func (u *UserPostgres) Login(email string) (string, string, error) {
 	const op = "repository.user.Login"
 
