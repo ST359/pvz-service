@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS pvzs (
     city TEXT CHECK(city IN('Москва', 'Казань', 'Санкт-Петербург')) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS receipts (
+CREATE TABLE IF NOT EXISTS receptions (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     pvz_id UUID REFERENCES pvz(id) ON DELETE CASCADE,
@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS receipts (
 
 CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    reception_id UUID REFERENCES receipts(id) ON DELETE CASCADE,
+    reception_id UUID REFERENCES receptions(id) ON DELETE CASCADE,
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     type TEXT CHECK (type IN ('электроника', 'одежда', 'обувь')) NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS idx_receipts_date ON receipts (date)
+CREATE INDEX IF NOT EXISTS idx_receptions_date ON receptions (date);

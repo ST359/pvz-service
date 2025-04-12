@@ -22,7 +22,7 @@ func (r *ReceptionPostgres) Create(pvzID uuid.UUID) (api.Reception, error) {
 
 	var rec api.Reception
 	psql := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
-	err := psql.Insert(receiptsTable).
+	err := psql.Insert(receptionsTable).
 		Columns("pvz_id").
 		Values(pvzID).
 		Suffix("RETURNING id, date, pvz_id, status").

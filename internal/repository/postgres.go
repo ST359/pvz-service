@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	usersTable    = "users"
-	pvzTable      = "pvzs"
-	receiptsTable = "receipts"
-	productsTable = "products"
+	usersTable      = "users"
+	pvzTable        = "pvzs"
+	receptionsTable = "receptions"
+	productsTable   = "products"
 )
 
 func NewPostgresDB(cfg *config.Config) (*sql.DB, error) {

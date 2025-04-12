@@ -8,6 +8,7 @@ import (
 )
 
 type User interface {
+	//Create creates a user and returns an id of the user
 	Create(email string, password_hash string, role string) (uuid.UUID, error)
 	//Login returns password hash and role of a user with given email
 	Login(email string) (string, string, error)
@@ -15,12 +16,13 @@ type User interface {
 type PVZ interface {
 	Create(pvz api.PVZ) (api.PVZ, error)
 	GetByDate(params api.GetPvzParams) ([]api.PVZInfo, error)
+	GetReceptionInProgress(pvzID uuid.UUID) (uuid.UUID, error)
 	CloseLastReception(pvzID uuid.UUID) (api.Reception, error)
 	DeleteLastProduct(pvzID uuid.UUID) error
 }
 type Reception interface {
 	Create(pvzID uuid.UUID) (api.Reception, error)
-	AddProduct(pvzId uuid.UUID, product api.ProductType) (api.Product, error)
+	AddProduct(pvzID uuid.UUID, product api.ProductType) (api.Product, error)
 }
 type Repository struct {
 	User
