@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS pvz (
+CREATE TABLE IF NOT EXISTS pvzs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     city TEXT CHECK(city IN('Москва', 'Казань', 'Санкт-Петербург')) NOT NULL
@@ -27,3 +27,5 @@ CREATE TABLE IF NOT EXISTS products (
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     type TEXT CHECK (type IN ('электроника', 'одежда', 'обувь')) NOT NULL
 );
+
+CREATE INDEX IF NOT EXISTS idx_receipts_date ON receipts (date)
