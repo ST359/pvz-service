@@ -17,13 +17,13 @@ type User interface {
 type PVZ interface {
 	Create(pvz api.PVZ) (api.PVZ, error)
 	GetByDate(params api.GetPvzParams) ([]api.PVZInfo, error)
-	CloseLastReception(pvzID uuid.UUID) (api.Reception, error)
 }
 type Reception interface {
 	Create(pvzID uuid.UUID) (api.Reception, error)
-	AddProduct(pvzID uuid.UUID, product api.ProductType) (api.Product, error)
+	AddProduct(recID uuid.UUID, product api.ProductType) (api.Product, error)
 	GetReceptionInProgress(pvzID uuid.UUID) (uuid.UUID, error)
 	DeleteLastProduct(recID uuid.UUID) error
+	CloseLastReception(pvzID uuid.UUID) (api.Reception, error)
 }
 type Repository struct {
 	User

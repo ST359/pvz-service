@@ -114,3 +114,19 @@ func (r *ReceptionPostgres) DeleteLastProduct(recID uuid.UUID) error {
 
 	return nil
 }
+func (r *ReceptionPostgres) CloseLastReception(recID uuid.UUID) (api.Reception, error) {
+	const op = "repository.pvz.CloseLastReception"
+
+	var rec api.Reception
+	psql := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
+	err := psql.Update(receptionsTable).
+		Set("status", "close").
+		Where(squirrel.Eq{"id": recID}).
+		Suffix("RETURNING id, date, pvz_id, status").
+		RunWith(r.db).
+		QueryRow().Scan(&rec.Id, &rec.DateTime, &rec.PvzId, &rec.Status)
+	if err != nil {
+		return api.Reception{}, fmt.Errorf("%s: %w", op, err)
+	}
+	return rec, nil
+}
