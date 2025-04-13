@@ -2,10 +2,12 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/ST359/pvz-service/internal/api"
+	errs "github.com/ST359/pvz-service/internal/app_errors"
 	"github.com/google/uuid"
 )
 
@@ -48,4 +50,67 @@ func (r *ReceptionPostgres) AddProduct(recID uuid.UUID, prodType api.ProductType
 		return api.Product{}, fmt.Errorf("%s: %w", op, err)
 	}
 	return prod, nil
+}
+func (r *ReceptionPostgres) GetReceptionInProgress(pvzID uuid.UUID) (uuid.UUID, error) {
+	const op = "repository.pvz.ReceptionInProgress"
+
+	var id uuid.UUID
+	psql := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
+	err := psql.Select("id").
+		From(receptionsTable).
+		Where(squirrel.And{squirrel.Eq{"pvz_id": pvzID}, squirrel.Eq{"status": "in_progress"}}).
+		RunWith(r.db).
+		QueryRow().Scan(&id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return uuid.UUID{}, errs.ErrNoReceptionsInProgress
+		}
+		return uuid.UUID{}, fmt.Errorf("%s: %w", op, err)
+	}
+	return id, nil
+}
+
+func (r *ReceptionPostgres) DeleteLastProduct(recID uuid.UUID) error {
+	const op = "repository.pvz.DeleteLastProduct"
+
+	tx, err := r.db.Begin()
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	defer tx.Rollback()
+
+	var lastProductID uuid.UUID
+	psql := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
+	err = psql.Select("id").
+		From("products").
+		Where(squirrel.Eq{"reception_id": recID}).
+		OrderBy("date DESC").
+		Limit(1).
+		RunWith(tx).
+		QueryRow().
+		Scan(&lastProductID)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return errs.ErrNoProductsInReception
+		}
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	if lastProductID != uuid.Nil {
+		_, err = psql.Delete("products").
+			Where(squirrel.Eq{"id": lastProductID}).
+			RunWith(tx).
+			Exec()
+
+		if err != nil {
+			return fmt.Errorf("%s: %w", op, err)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
 }
