@@ -2,9 +2,11 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/Masterminds/squirrel"
+	errs "github.com/ST359/pvz-service/internal/app_errors"
 	"github.com/google/uuid"
 )
 
@@ -46,7 +48,28 @@ func (u *UserPostgres) Login(email string) (string, string, error) {
 		RunWith(u.db).
 		QueryRow().Scan(&passHash, &role)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", "", errs.ErrWrongCreds
+		}
 		return "", "", fmt.Errorf("%s: %w", op, err)
 	}
 	return passHash, role, nil
+}
+func (u *UserPostgres) EmailExists(email string) (bool, error) {
+	const op = "repository.user.EmailExists"
+
+	psql := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
+	var exists bool
+	err := psql.Select("COUNT(*)>0").
+		From(usersTable).
+		Where(squirrel.Eq{"email": email}).
+		RunWith(u.db).
+		QueryRow().Scan(&exists)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, nil
+		}
+		return false, fmt.Errorf("%s: %w", op, err)
+	}
+	return exists, nil
 }

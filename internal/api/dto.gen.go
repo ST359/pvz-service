@@ -15,9 +15,9 @@ const (
 
 // Defines values for PVZCity.
 const (
-	Kazan            PVZCity = "Казань"
-	Moscow           PVZCity = "Москва"
-	SaintsPetersburg PVZCity = "Санкт-Петербург"
+	Kazan           PVZCity = "Казань"
+	Moscow          PVZCity = "Москва"
+	SaintPetersburg PVZCity = "Санкт-Петербург"
 )
 
 // Defines values for ProductType.
@@ -75,11 +75,8 @@ type PVZCity string
 
 // PVZInfo defines model for PVZInfo.
 type PVZInfo struct {
-	Pvz        *PVZ `json:"pvz,omitempty"`
-	Receptions *[]struct {
-		Products  *[]Product `json:"products,omitempty"`
-		Reception *Reception `json:"reception,omitempty"`
-	} `json:"receptions,omitempty"`
+	Pvz        *PVZ             `json:"pvz,omitempty"`
+	Receptions *[]ReceptionInfo `json:"receptions,omitempty"`
 }
 
 // PVZResponse defines model for PVZResponse.
@@ -106,6 +103,12 @@ type Reception struct {
 
 // ReceptionStatus defines model for Reception.Status.
 type ReceptionStatus string
+
+// ReceptionInfo defines model for ReceptionInfo.
+type ReceptionInfo struct {
+	Products  *[]Product `json:"products,omitempty"`
+	Reception *Reception `json:"reception,omitempty"`
+}
 
 // Token defines model for Token.
 type Token = string

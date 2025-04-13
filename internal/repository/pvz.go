@@ -2,11 +2,18 @@ package repository
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/ST359/pvz-service/internal/api"
 	"github.com/google/uuid"
+)
+
+const (
+	defaultLimit  = 10
+	defaultOffset = 0
 )
 
 type PVZPostgres struct {
@@ -35,7 +42,81 @@ func (p *PVZPostgres) Create(pvz api.PVZ) (api.PVZ, error) {
 func (p *PVZPostgres) GetByDate(params api.GetPvzParams) ([]api.PVZInfo, error) {
 	const op = "repository.pvz.GetByDate"
 
-	panic("not implemented")
+	// Prepare parameters
+	limit := defaultLimit
+	if params.Limit != nil {
+		limit = *params.Limit
+	}
+
+	offset := defaultOffset
+	if params.Page != nil {
+		offset = (*params.Page - 1) * limit
+	}
+
+	// Prepare date parameters
+	var startDate, endDate interface{}
+	if params.StartDate != nil {
+		startDate = *params.StartDate
+	} else {
+		startDate = nil
+	}
+	if params.EndDate != nil {
+		endDate = *params.EndDate
+	} else {
+		endDate = nil
+	}
+
+	// Execute the function
+	rows, err := p.db.Query(
+		"SELECT * FROM get_pvz_with_receptions_paginated($1, $2, $3, $4)",
+		startDate,
+		endDate,
+		limit,
+		offset,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	var result []api.PVZInfo
+
+	for rows.Next() {
+		var (
+			pvzID          uuid.UUID
+			city           string
+			regDate        time.Time
+			receptionsJSON []byte
+		)
+
+		if err := rows.Scan(&pvzID, &city, &regDate, &receptionsJSON); err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+
+		// Parse directly into the defined ReceptionInfo type
+		var receptionInfos []api.ReceptionInfo
+		if err := json.Unmarshal(receptionsJSON, &receptionInfos); err != nil {
+			return nil, fmt.Errorf("%s: failed to unmarshal receptions: %w", op, err)
+		}
+
+		// Create PVZInfo with properly typed Receptions
+		pvzInfo := api.PVZInfo{
+			Pvz: &api.PVZ{
+				Id:               (*uuid.UUID)(&pvzID),
+				City:             api.PVZCity(city),
+				RegistrationDate: &regDate,
+			},
+			Receptions: &receptionInfos,
+		}
+
+		result = append(result, pvzInfo)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return result, nil
 }
 func (p *PVZPostgres) CloseLastReception(recID uuid.UUID) (api.Reception, error) {
 	const op = "repository.pvz.CloseLastReception"
@@ -67,7 +148,7 @@ func (p *PVZPostgres) DeleteLastProduct(recID uuid.UUID) error {
 	psql := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 	err = psql.Select("id").
 		From("products").
-		Where("reception_id = ?", recID).
+		Where(squirrel.Eq{"reception_id": recID}).
 		OrderBy("date DESC").
 		Limit(1).
 		RunWith(tx).

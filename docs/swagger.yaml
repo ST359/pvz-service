@@ -36,6 +36,15 @@ components:
           type: string
           enum: [Москва, Санкт-Петербург, Казань]
       required: [city]
+    ReceptionInfo:
+      type: object
+      properties:
+        reception:
+          $ref: '#/components/schemas/Reception'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
     PVZInfo:
       type: object
       properties:
@@ -44,14 +53,8 @@ components:
         receptions:
           type: array
           items:
-            type: object
-            properties:
-              reception:
-                $ref: '#/components/schemas/Reception'
-              products:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Product'
+            $ref: '#/components/schemas/ReceptionInfo'
+
     PVZResponse:
       type: array
       items:

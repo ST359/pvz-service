@@ -12,13 +12,14 @@ type User interface {
 	Create(email string, password_hash string, role string) (uuid.UUID, error)
 	//Login returns password hash and role of a user with given email
 	Login(email string) (string, string, error)
+	EmailExists(email string) (bool, error)
 }
 type PVZ interface {
 	Create(pvz api.PVZ) (api.PVZ, error)
 	GetByDate(params api.GetPvzParams) ([]api.PVZInfo, error)
 	GetReceptionInProgress(pvzID uuid.UUID) (uuid.UUID, error)
 	CloseLastReception(pvzID uuid.UUID) (api.Reception, error)
-	DeleteLastProduct(pvzID uuid.UUID) error
+	DeleteLastProduct(recID uuid.UUID) error
 }
 type Reception interface {
 	Create(pvzID uuid.UUID) (api.Reception, error)
