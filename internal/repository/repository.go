@@ -23,7 +23,7 @@ type Reception interface {
 	AddProduct(recID uuid.UUID, product api.ProductType) (api.Product, error)
 	GetReceptionInProgress(pvzID uuid.UUID) (uuid.UUID, error)
 	DeleteLastProduct(recID uuid.UUID) error
-	CloseLastReception(pvzID uuid.UUID) (api.Reception, error)
+	CloseLastReception(recID uuid.UUID) (api.Reception, error)
 }
 type Repository struct {
 	User

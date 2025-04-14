@@ -63,13 +63,14 @@ func (r *ReceptionPostgres) GetReceptionInProgress(pvzID uuid.UUID) (uuid.UUID, 
 		QueryRow().Scan(&id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return uuid.UUID{}, errs.ErrNoReceptionsInProgress
+			return uuid.Nil, errs.ErrNoReceptionsInProgress
 		}
-		return uuid.UUID{}, fmt.Errorf("%s: %w", op, err)
+		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
 	}
 	return id, nil
 }
 
+// DeleteLastProduct can return ErrNoProductsInReception
 func (r *ReceptionPostgres) DeleteLastProduct(recID uuid.UUID) error {
 	const op = "repository.pvz.DeleteLastProduct"
 

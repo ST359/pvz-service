@@ -31,7 +31,7 @@ func (u *UserPostgres) Create(email string, password_hash string, role string) (
 		RunWith(u.db).
 		QueryRow().Scan(&id)
 	if err != nil {
-		return uuid.UUID{}, fmt.Errorf("%s: %w", op, err)
+		return uuid.Nil, fmt.Errorf("%s: %w", op, err)
 	}
 	return id, nil
 }
