@@ -23,7 +23,7 @@ func (h *Handler) userRoleMW(c *gin.Context) {
 		return
 	}
 
-	role, err := h.services.User.ParseToken(headerParts[1])
+	role, err := h.Services.User.ParseToken(headerParts[1])
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusForbidden, ErrMessageAccessDenied)
 		return

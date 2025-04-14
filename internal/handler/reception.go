@@ -25,13 +25,13 @@ func (h *Handler) CreateReception(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, ErrMessageBadRequest)
 		return
 	}
-	reception, err := h.services.Reception.Create(pvzID.PvzId)
+	reception, err := h.Services.Reception.Create(pvzID.PvzId)
 	if err != nil {
 		if errors.Is(err, errs.ErrReceptionNotClosed) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, ErrMessageBadRequest)
 			return
 		}
-		h.logger.Error("failed to open reception", slog.String("op", op), slog.String("error", err.Error()))
+		h.Logger.Error("failed to open reception", slog.String("op", op), slog.String("error", err.Error()))
 		c.AbortWithStatusJSON(http.StatusInternalServerError, ErrMessageInternalServerError)
 		return
 	}
@@ -47,13 +47,13 @@ func (h *Handler) CloseLastReception(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, ErrMessageBadRequest)
 		return
 	}
-	reception, err := h.services.Reception.CloseLastReception(pvzId)
+	reception, err := h.Services.Reception.CloseLastReception(pvzId)
 	if err != nil {
 		if errors.Is(err, errs.ErrNoReceptionsInProgress) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, ErrMessageBadRequest)
 			return
 		}
-		h.logger.Error("failed to close reception", slog.String("op", op), slog.String("error", err.Error()))
+		h.Logger.Error("failed to close reception", slog.String("op", op), slog.String("error", err.Error()))
 		c.AbortWithStatusJSON(http.StatusInternalServerError, ErrMessageInternalServerError)
 		return
 	}
@@ -69,13 +69,13 @@ func (h *Handler) DeleteLastProduct(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, ErrMessageBadRequest)
 		return
 	}
-	err = h.services.Reception.DeleteLastProduct(pvzId)
+	err = h.Services.Reception.DeleteLastProduct(pvzId)
 	if err != nil {
 		if errors.Is(err, errs.ErrNoProductsInReception) || errors.Is(err, errs.ErrNoReceptionsInProgress) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, ErrMessageBadRequest)
 			return
 		}
-		h.logger.Error("failed to delete last product", slog.String("op", op), slog.String("error", err.Error()))
+		h.Logger.Error("failed to delete last product", slog.String("op", op), slog.String("error", err.Error()))
 		c.AbortWithStatusJSON(http.StatusInternalServerError, ErrMessageInternalServerError)
 		return
 	}
@@ -94,13 +94,13 @@ func (h *Handler) AddProduct(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, ErrMessageBadRequest)
 		return
 	}
-	prodRes, err := h.services.AddProduct(prodReq.PvzId, api.ProductType(prodReq.Type))
+	prodRes, err := h.Services.AddProduct(prodReq.PvzId, api.ProductType(prodReq.Type))
 	if err != nil {
 		if errors.Is(err, errs.ErrNoReceptionsInProgress) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, ErrMessageBadRequest)
 			return
 		}
-		h.logger.Error("failed to add product", slog.String("op", op), slog.String("error", err.Error()))
+		h.Logger.Error("failed to add product", slog.String("op", op), slog.String("error", err.Error()))
 		c.AbortWithStatusJSON(http.StatusInternalServerError, ErrMessageInternalServerError)
 		return
 	}

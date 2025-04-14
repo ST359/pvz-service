@@ -16,12 +16,12 @@ var (
 )
 
 type Handler struct {
-	services *service.Service
-	logger   *slog.Logger
+	Services *service.Service
+	Logger   *slog.Logger
 }
 
-func NewHandler(service *service.Service, logger *slog.Logger) *Handler {
-	return &Handler{services: service, logger: logger}
+func NewHandler(service *service.Service, Logger *slog.Logger) *Handler {
+	return &Handler{Services: service, Logger: Logger}
 }
 func (h *Handler) InitRoutes() *gin.Engine {
 	r := gin.New()

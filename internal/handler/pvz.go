@@ -19,14 +19,14 @@ func (h *Handler) CreatePVZ(c *gin.Context) {
 	var pvzreq api.PostPvzJSONRequestBody
 	err := c.ShouldBind(&pvzreq)
 	if err != nil {
-		h.logger.Error("failed to bind pvz request", slog.String("op", op), slog.String("error", err.Error()))
+		h.Logger.Error("failed to bind pvz request", slog.String("op", op), slog.String("error", err.Error()))
 		c.AbortWithStatusJSON(http.StatusBadRequest, ErrMessageBadRequest)
 		return
 	}
 
-	pvzres, err := h.services.PVZ.Create(pvzreq)
+	pvzres, err := h.Services.PVZ.Create(pvzreq)
 	if err != nil {
-		h.logger.Error("failed to create pvz", slog.String("op", op), slog.String("error", err.Error()))
+		h.Logger.Error("failed to create pvz", slog.String("op", op), slog.String("error", err.Error()))
 		c.AbortWithStatusJSON(http.StatusInternalServerError, ErrMessageInternalServerError)
 		return
 	}
@@ -39,13 +39,13 @@ func (h *Handler) GetPVZ(c *gin.Context) {
 
 	err := c.ShouldBind(&params)
 	if err != nil {
-		h.logger.Error("failed to bind pvz get request", slog.String("op", op), slog.String("error", err.Error()))
+		h.Logger.Error("failed to bind pvz get request", slog.String("op", op), slog.String("error", err.Error()))
 		c.AbortWithStatusJSON(http.StatusBadRequest, ErrMessageBadRequest)
 		return
 	}
-	info, err := h.services.GetByDate(params)
+	info, err := h.Services.GetByDate(params)
 	if err != nil {
-		h.logger.Error("failed to get pvz by date", slog.String("op", op), slog.String("error", err.Error()))
+		h.Logger.Error("failed to get pvz by date", slog.String("op", op), slog.String("error", err.Error()))
 		c.AbortWithStatusJSON(http.StatusInternalServerError, ErrMessageInternalServerError)
 		return
 	}
