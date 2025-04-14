@@ -10,6 +10,7 @@ type User interface {
 	CreateUser(usr api.PostRegisterJSONBody) (api.User, error)
 	Login(creds api.PostLoginJSONBody) (string, error)
 	ParseToken(tok string) (string, error)
+	GenerateToken(role string) (string, error)
 }
 
 type Reception interface {

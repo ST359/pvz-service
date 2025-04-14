@@ -68,7 +68,7 @@ func (u *UserService) Login(creds api.PostLoginJSONBody) (string, error) {
 	if err := bcrypt.CompareHashAndPassword([]byte(passHash), []byte(creds.Password)); err != nil {
 		return "", errs.ErrWrongCreds
 	}
-	tok, err := generateToken(role)
+	tok, err := u.GenerateToken(role)
 	if err != nil {
 		return "", fmt.Errorf("%s: error generating jwt: %w", op, err)
 	}
@@ -97,7 +97,7 @@ func (u *UserService) ParseToken(tok string) (string, error) {
 	return claims.UserRole, nil
 }
 
-func generateToken(role string) (string, error) {
+func (u *UserService) GenerateToken(role string) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		jwt.StandardClaims{
