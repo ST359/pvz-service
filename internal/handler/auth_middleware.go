@@ -18,7 +18,7 @@ func (h *Handler) userRoleMW(c *gin.Context) {
 	header := c.GetHeader(authHeader)
 
 	headerParts := strings.Split(header, " ")
-	if len(headerParts) != 2 || !strings.EqualFold(headerParts[1], "Bearer") || len(headerParts[1]) == 0 {
+	if len(headerParts) != 2 || !strings.EqualFold(headerParts[0], "Bearer") || len(headerParts[1]) == 0 {
 		c.AbortWithStatusJSON(http.StatusForbidden, ErrMessageAccessDenied)
 		return
 	}

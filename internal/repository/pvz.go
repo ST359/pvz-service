@@ -29,7 +29,7 @@ func (p *PVZPostgres) Create(pvz api.PVZ) (api.PVZ, error) {
 	var resPVZ api.PVZ
 	psql := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 	err := psql.Insert(pvzTable).
-		Columns("pvz_id").
+		Columns("city").
 		Values(pvz.City).
 		Suffix("RETURNING id, registration_date, city").
 		RunWith(p.db).
@@ -92,18 +92,25 @@ func (p *PVZPostgres) GetByDate(params api.GetPvzParams) ([]api.PVZInfo, error) 
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
 
-		var receptionInfos []api.ReceptionInfo
-		if err := json.Unmarshal(receptionsJSON, &receptionInfos); err != nil {
-			return nil, fmt.Errorf("%s: failed to unmarshal receptions: %w", op, err)
-		}
-
 		pvzInfo := api.PVZInfo{
 			Pvz: &api.PVZ{
 				Id:               (*uuid.UUID)(&pvzID),
 				City:             api.PVZCity(city),
 				RegistrationDate: &regDate,
 			},
-			Receptions: &receptionInfos,
+			Receptions: nil,
+		}
+
+		// Only process receptions if JSON exists and is not empty
+		if len(receptionsJSON) > 0 && string(receptionsJSON) != "null" {
+			var receptionInfos []api.ReceptionInfo
+			if err := json.Unmarshal(receptionsJSON, &receptionInfos); err != nil {
+				return nil, fmt.Errorf("%s: failed to unmarshal receptions: %w", op, err)
+			}
+
+			if len(receptionInfos) > 0 {
+				pvzInfo.Receptions = &receptionInfos
+			}
 		}
 
 		result = append(result, pvzInfo)
