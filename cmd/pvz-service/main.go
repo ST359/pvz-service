@@ -41,7 +41,7 @@ func main() {
 
 	db, err := repository.NewPostgresDB(cfg)
 	if err != nil {
-		log.Fatalf("error during db initializing: %w", err)
+		log.Fatalf("error during db initializing: %s", err.Error())
 	}
 	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
@@ -49,7 +49,7 @@ func main() {
 	srv := new(Server)
 	go func() {
 		if err := srv.Run(strconv.Itoa(cfg.Port), handlers.InitRoutes()); err != nil {
-			log.Fatalf("error while running server: %w", err)
+			log.Fatalf("error while running server: %s", err.Error())
 		}
 	}()
 
@@ -59,10 +59,10 @@ func main() {
 	log.Print("Shutting down")
 
 	if err := srv.Shutdown(context.Background()); err != nil {
-		log.Print("error occured on server shutting down: %s", err.Error())
+		log.Printf("error occured on server shutting down: %s", err.Error())
 	}
 
 	if err := db.Close(); err != nil {
-		log.Print("error occured on db connection close: %s", err.Error())
+		log.Printf("error occured on db connection close: %s", err.Error())
 	}
 }
