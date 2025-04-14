@@ -12,7 +12,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// MockReceptionRepository is a mock implementation of repository.Reception
 type MockReceptionRepository struct {
 	mock.Mock
 }
@@ -51,7 +50,7 @@ func TestReceptionService_Create(t *testing.T) {
 		pvzID       uuid.UUID
 		mockSetup   func(*MockReceptionRepository)
 		expected    api.Reception
-		expectedErr string // Changed to string to match the actual error format
+		expectedErr string
 	}{
 		{
 			name:  "successful creation",
