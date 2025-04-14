@@ -66,7 +66,6 @@ func (p *PVZPostgres) GetByDate(params api.GetPvzParams) ([]api.PVZInfo, error) 
 		endDate = nil
 	}
 
-	// Execute the function
 	rows, err := p.db.Query(
 		"SELECT * FROM get_pvz_with_receptions_paginated($1, $2, $3, $4)",
 		startDate,
@@ -93,13 +92,11 @@ func (p *PVZPostgres) GetByDate(params api.GetPvzParams) ([]api.PVZInfo, error) 
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
 
-		// Parse directly into the defined ReceptionInfo type
 		var receptionInfos []api.ReceptionInfo
 		if err := json.Unmarshal(receptionsJSON, &receptionInfos); err != nil {
 			return nil, fmt.Errorf("%s: failed to unmarshal receptions: %w", op, err)
 		}
 
-		// Create PVZInfo with properly typed Receptions
 		pvzInfo := api.PVZInfo{
 			Pvz: &api.PVZ{
 				Id:               (*uuid.UUID)(&pvzID),
