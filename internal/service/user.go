@@ -76,7 +76,7 @@ func (u *UserService) Login(creds api.PostLoginJSONBody) (string, error) {
 }
 
 // ParseToken returns a role of a user on success
-func (u *UserService) ParseToken(tok string) (string, error) {
+func (u *UserService) ParseToken(tok string) (api.UserRole, error) {
 
 	token, err := jwt.ParseWithClaims(tok, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -94,7 +94,7 @@ func (u *UserService) ParseToken(tok string) (string, error) {
 		return "", errs.ErrWrongCreds
 	}
 
-	return claims.UserRole, nil
+	return api.UserRole(claims.UserRole), nil
 }
 
 func (u *UserService) GenerateToken(role string) (string, error) {
