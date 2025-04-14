@@ -19,13 +19,13 @@ func (h *Handler) userRoleMW(c *gin.Context) {
 
 	headerParts := strings.Split(header, " ")
 	if len(headerParts) != 2 || headerParts[0] != "Bearer" || len(headerParts[1]) == 0 {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, ErrMessageUnauthorized)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, ErrMessageAccessDenied)
 		return
 	}
 
 	role, err := h.services.User.ParseToken(headerParts[1])
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, ErrMessageUnauthorized)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, ErrMessageAccessDenied)
 		return
 	}
 

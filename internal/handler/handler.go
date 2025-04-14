@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	ErrMessageUnauthorized        = api.Error{Message: "Access denied"}
+	ErrMessageAccessDenied        = api.Error{Message: "Access denied"}
 	ErrMessageBadRequest          = api.Error{Message: "Bad request"}
 	ErrMessageInternalServerError = api.Error{Message: "Internal server error"}
 	ErrMessageWrongCredentials    = api.Error{Message: "Wrong credentials"}
