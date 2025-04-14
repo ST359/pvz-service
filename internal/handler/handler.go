@@ -24,7 +24,26 @@ func NewHandler(service *service.Service, logger *slog.Logger) *Handler {
 	return &Handler{services: service, logger: logger}
 }
 func (h *Handler) InitRoutes() *gin.Engine {
-	//router := gin.New()
+	r := gin.New()
+	public := r.Group("/")
+	{
+		public.POST("/dummyLogin", h.DummyLogin)
+		public.POST("/register", h.Register)
+		public.POST("/login", h.Login)
+	}
 
-	panic("not implemented")
+	// Routes with auth
+	protected := r.Group("/")
+	protected.Use(h.userRoleMW)
+	{
+		protected.POST("/pvz", h.CreatePVZ)
+		protected.GET("/pvz", h.GetPVZ)
+		protected.POST("/pvz/:pvzId/close_last_reception", h.CloseLastReception)
+		protected.POST("/pvz/:pvzId/delete_last_product", h.DeleteLastProduct)
+
+		protected.POST("/receptions", h.CreateReception)
+
+		protected.POST("/products", h.AddProduct)
+	}
+	return r
 }
