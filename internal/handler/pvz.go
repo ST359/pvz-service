@@ -37,7 +37,7 @@ func (h *Handler) GetPVZ(c *gin.Context) {
 	//auth handled in middleware
 	var params api.GetPvzParams
 
-	err := c.ShouldBind(&params)
+	err := c.ShouldBindQuery(&params)
 	if err != nil {
 		h.Logger.Error("failed to bind pvz get request", slog.String("op", op), slog.String("error", err.Error()))
 		c.AbortWithStatusJSON(http.StatusBadRequest, ErrMessageBadRequest)
